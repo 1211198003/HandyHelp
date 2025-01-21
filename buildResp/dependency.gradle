@@ -1,0 +1,23 @@
+
+ext {
+    // 引入在线模块
+    dep = [
+        project: [
+            "appcompat",
+            "compose_runtime"
+//            "androidx-activity-compose",
+        ],
+        app: [
+
+        ]
+    ]
+    // 写的是引入本地模块
+    localDep = [
+        app: [
+
+        ]
+    ]
+
+}
+
+

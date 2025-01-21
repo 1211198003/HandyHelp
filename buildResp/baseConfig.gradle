@@ -1,0 +1,6 @@
+
+android{
+    defaultConfig {
+        buildConfigField("boolean", "isRelease", String.valueOf(isRelease))
+    }
+}

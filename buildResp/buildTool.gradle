@@ -1,0 +1,49 @@
+apply from: "$rootDir/buildResp/dependency.gradle"
+apply from: "$rootDir/buildResp/element.gradle"
+apply from: "$rootDir/buildResp/baseConfig.gradle"
+
+// 将上述的 control_lib 按照 name: lib的hash形式存在 hashmap 中
+ext.set("globalDependenciesMap", new HashMap<String, HashMap<String, String>>())
+control_lib.each { lib ->
+    def d = ext
+    ext.globalDependenciesMap[lib.name] =  lib
+}
+println("globalDependenciesMap"+ globalDependenciesMap)
+println("element.gradle")
+
+// 执行操作，将 element 中将 control_lib 里的 map 取出
+// 按照 name 存放到 一个 map 集合中， 再根据 dependency.gradle 中的按需引入
+pullDependency(project.ext.dep["project"])
+pullDependency(project.ext.dep[project.name])
+
+// 从maven上导入根据项目需要导入所需要的包
+def pullDependency(List<String> moduleDeps){
+    if(moduleDeps != null && !moduleDeps.isEmpty()){
+            moduleDeps.each{ dep ->
+                def libMap = project.ext.globalDependenciesMap[dep]
+                def declare = libMap.get("declare")
+                def groupId = libMap.get("groupId")
+                def groupName = libMap.get("groupName")
+                def version = libMap.get("version")
+                println("依赖包 ${groupId}:${groupName}:${version}已经通过${declare}的方式加入${project.name}中了")
+                dependencies.add(declare, "${groupId}:${groupName}:${version}")
+        }
+    }
+}
+
+if(isRelease){
+    // 从模块中导入所需要的
+    pullLocalModule(project.ext.localDep[project.name])
+}
+
+def pullLocalModule(List<String> localModules){
+    localModules.each { module ->
+        dependencies {
+            implementation  project(":" + module)
+        }
+
+    }
+}
+
+println("buildTool.gradle")
+

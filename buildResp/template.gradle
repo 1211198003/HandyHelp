@@ -1,0 +1,72 @@
+
+apply from: "$rootDir/buildResp/config.gradle"
+
+ext {
+    buildConfigVersion =  [
+        compileSdk: 32,
+        minSdk : 24,
+        targetSdk : 32,
+        versionCode : 1,
+        versionName :'1.0',
+        testInstrumentationRunner : "androidx.test.runner.AndroidJUnitRunner",
+        useSupportLibrary : true,
+        sourceCompatibility: JavaVersion.VERSION_1_8,
+        targetCompatibility: JavaVersion.VERSION_1_8,
+        jvmTarget: 1.8,
+        compose: true,
+        kotlinCompilerExtensionVersion: '1.1.0-rc01',
+    ]
+}
+
+apply from: "${rootDir}/buildResp/buildTool.gradle"
+
+android {
+    compileSdk buildConfigVersion.compileSdk
+
+    defaultConfig {
+        minSdk buildConfigVersion.minSdk
+        targetSdk buildConfigVersion.targetSdk
+        versionCode buildConfigVersion.versionCode
+        versionName buildConfigVersion.versionName
+
+        testInstrumentationRunner buildConfigVersion.testInstrumentationRunner
+        vectorDrawables {
+            useSupportLibrary buildConfigVersion.useSupportLibrary
+        }
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [options: project.name]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility buildConfigVersion.sourceCompatibility
+        targetCompatibility buildConfigVersion.targetCompatibility
+    }
+    kotlinOptions {
+        jvmTarget = buildConfigVersion.jvmTarget
+    }
+    buildFeatures {
+        compose buildConfigVersion.compose
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion buildConfigVersion.kotlinCompilerExtensionVersion
+    }
+    buildFeatures {
+        buildConfig = true
+    }
+
+}
+
+
+
+
+
+
